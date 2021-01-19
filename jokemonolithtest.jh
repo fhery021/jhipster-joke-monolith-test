@@ -1,0 +1,20 @@
+entity Joke {
+	text String required
+}
+
+entity Like {
+	UserId Long required,
+    JokeId Long required
+}
+
+relationship OneToMany {
+	Joke to	Like{joke}
+}
+
+// Set service options to all except few
+service all with serviceImpl except Like
+
+// Set pagination options
+paginate Joke with infinite-scroll
+
+// ---------------------------------
