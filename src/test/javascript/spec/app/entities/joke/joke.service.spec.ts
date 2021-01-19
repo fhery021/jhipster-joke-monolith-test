@@ -20,7 +20,7 @@ describe('Service Tests', () => {
       service = injector.get(JokeService);
       httpMock = injector.get(HttpTestingController);
 
-      elemDefault = new Joke(0, 'AAAAAAA');
+      elemDefault = new Joke(0, 'AAAAAAA', 'AAAAAAA');
     });
 
     describe('Service methods', () => {
@@ -54,7 +54,8 @@ describe('Service Tests', () => {
       it('should update a Joke', () => {
         const returnedFromService = Object.assign(
           {
-            text: 'BBBBBB',
+            question: 'BBBBBB',
+            answer: 'BBBBBB',
           },
           elemDefault
         );
@@ -71,7 +72,8 @@ describe('Service Tests', () => {
       it('should return a list of Joke', () => {
         const returnedFromService = Object.assign(
           {
-            text: 'BBBBBB',
+            question: 'BBBBBB',
+            answer: 'BBBBBB',
           },
           elemDefault
         );

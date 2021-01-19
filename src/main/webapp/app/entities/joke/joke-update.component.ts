@@ -17,7 +17,8 @@ export class JokeUpdateComponent implements OnInit {
 
   editForm = this.fb.group({
     id: [],
-    text: [null, [Validators.required]],
+    question: [null, [Validators.required]],
+    answer: [null, [Validators.required]],
   });
 
   constructor(protected jokeService: JokeService, protected activatedRoute: ActivatedRoute, private fb: FormBuilder) {}
@@ -31,7 +32,8 @@ export class JokeUpdateComponent implements OnInit {
   updateForm(joke: IJoke): void {
     this.editForm.patchValue({
       id: joke.id,
-      text: joke.text,
+      question: joke.question,
+      answer: joke.answer,
     });
   }
 
@@ -53,7 +55,8 @@ export class JokeUpdateComponent implements OnInit {
     return {
       ...new Joke(),
       id: this.editForm.get(['id'])!.value,
-      text: this.editForm.get(['text'])!.value,
+      question: this.editForm.get(['question'])!.value,
+      answer: this.editForm.get(['answer'])!.value,
     };
   }
 

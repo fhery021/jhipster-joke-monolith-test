@@ -23,14 +23,16 @@
             <thead>
                 <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="reset.bind(this)">
                     <th scope="col"  jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
-                    <th scope="col"  jhiSortBy="text"><span jhiTranslate="jokeMonolithTestApp.joke.text">Text</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="question"><span jhiTranslate="jokeMonolithTestApp.joke.question">Question</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="answer"><span jhiTranslate="jokeMonolithTestApp.joke.answer">Answer</span> <fa-icon icon="sort"></fa-icon></th>
                     <th scope="col"></th>
                 </tr>
             </thead>
             <tbody infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">
                 <tr *ngFor="let joke of jokes ;trackBy: trackId">
                     <td><a [routerLink]="['/joke', joke.id, 'view']">{{ joke.id }}</a></td>
-                    <td>{{ joke.text }}</td>
+                    <td>{{ joke.question }}</td>
+                    <td>{{ joke.answer }}</td>
                     <td class="text-right">
                         <div class="btn-group">
                             <button type="submit"

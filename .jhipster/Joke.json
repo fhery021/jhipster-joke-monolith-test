@@ -2,7 +2,14 @@
   "name": "Joke",
   "fields": [
     {
-      "fieldName": "text",
+      "fieldName": "question",
+      "fieldType": "String",
+      "fieldValidateRules": [
+        "required"
+      ]
+    },
+    {
+      "fieldName": "answer",
       "fieldType": "String",
       "fieldValidateRules": [
         "required"

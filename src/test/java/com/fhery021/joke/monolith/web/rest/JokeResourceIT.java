@@ -30,8 +30,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WithMockUser
 public class JokeResourceIT {
 
-    private static final String DEFAULT_TEXT = "AAAAAAAAAA";
-    private static final String UPDATED_TEXT = "BBBBBBBBBB";
+    private static final String DEFAULT_QUESTION = "AAAAAAAAAA";
+    private static final String UPDATED_QUESTION = "BBBBBBBBBB";
+
+    private static final String DEFAULT_ANSWER = "AAAAAAAAAA";
+    private static final String UPDATED_ANSWER = "BBBBBBBBBB";
 
     @Autowired
     private JokeRepository jokeRepository;
@@ -55,7 +58,8 @@ public class JokeResourceIT {
      */
     public static Joke createEntity(EntityManager em) {
         Joke joke = new Joke()
-            .text(DEFAULT_TEXT);
+            .question(DEFAULT_QUESTION)
+            .answer(DEFAULT_ANSWER);
         return joke;
     }
     /**
@@ -66,7 +70,8 @@ public class JokeResourceIT {
      */
     public static Joke createUpdatedEntity(EntityManager em) {
         Joke joke = new Joke()
-            .text(UPDATED_TEXT);
+            .question(UPDATED_QUESTION)
+            .answer(UPDATED_ANSWER);
         return joke;
     }
 
@@ -89,7 +94,8 @@ public class JokeResourceIT {
         List<Joke> jokeList = jokeRepository.findAll();
         assertThat(jokeList).hasSize(databaseSizeBeforeCreate + 1);
         Joke testJoke = jokeList.get(jokeList.size() - 1);
-        assertThat(testJoke.getText()).isEqualTo(DEFAULT_TEXT);
+        assertThat(testJoke.getQuestion()).isEqualTo(DEFAULT_QUESTION);
+        assertThat(testJoke.getAnswer()).isEqualTo(DEFAULT_ANSWER);
     }
 
     @Test
@@ -114,10 +120,29 @@ public class JokeResourceIT {
 
     @Test
     @Transactional
-    public void checkTextIsRequired() throws Exception {
+    public void checkQuestionIsRequired() throws Exception {
         int databaseSizeBeforeTest = jokeRepository.findAll().size();
         // set the field null
-        joke.setText(null);
+        joke.setQuestion(null);
+
+        // Create the Joke, which fails.
+
+
+        restJokeMockMvc.perform(post("/api/jokes")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(joke)))
+            .andExpect(status().isBadRequest());
+
+        List<Joke> jokeList = jokeRepository.findAll();
+        assertThat(jokeList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    public void checkAnswerIsRequired() throws Exception {
+        int databaseSizeBeforeTest = jokeRepository.findAll().size();
+        // set the field null
+        joke.setAnswer(null);
 
         // Create the Joke, which fails.
 
@@ -142,7 +167,8 @@ public class JokeResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(joke.getId().intValue())))
-            .andExpect(jsonPath("$.[*].text").value(hasItem(DEFAULT_TEXT)));
+            .andExpect(jsonPath("$.[*].question").value(hasItem(DEFAULT_QUESTION)))
+            .andExpect(jsonPath("$.[*].answer").value(hasItem(DEFAULT_ANSWER)));
     }
     
     @Test
@@ -156,7 +182,8 @@ public class JokeResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(joke.getId().intValue()))
-            .andExpect(jsonPath("$.text").value(DEFAULT_TEXT));
+            .andExpect(jsonPath("$.question").value(DEFAULT_QUESTION))
+            .andExpect(jsonPath("$.answer").value(DEFAULT_ANSWER));
     }
     @Test
     @Transactional
@@ -179,7 +206,8 @@ public class JokeResourceIT {
         // Disconnect from session so that the updates on updatedJoke are not directly saved in db
         em.detach(updatedJoke);
         updatedJoke
-            .text(UPDATED_TEXT);
+            .question(UPDATED_QUESTION)
+            .answer(UPDATED_ANSWER);
 
         restJokeMockMvc.perform(put("/api/jokes")
             .contentType(MediaType.APPLICATION_JSON)
@@ -190,7 +218,8 @@ public class JokeResourceIT {
         List<Joke> jokeList = jokeRepository.findAll();
         assertThat(jokeList).hasSize(databaseSizeBeforeUpdate);
         Joke testJoke = jokeList.get(jokeList.size() - 1);
-        assertThat(testJoke.getText()).isEqualTo(UPDATED_TEXT);
+        assertThat(testJoke.getQuestion()).isEqualTo(UPDATED_QUESTION);
+        assertThat(testJoke.getAnswer()).isEqualTo(UPDATED_ANSWER);
     }
 
     @Test

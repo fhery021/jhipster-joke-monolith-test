@@ -72,7 +72,8 @@ class JokeGatlingTest extends Simulation {
             .headers(headers_http_authenticated)
             .body(StringBody("""{
                 "id":null
-                , "text":"SAMPLE_TEXT"
+                , "question":"SAMPLE_TEXT"
+                , "answer":"SAMPLE_TEXT"
                 }""")).asJson
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_joke_url"))).exitHereIfFailed
