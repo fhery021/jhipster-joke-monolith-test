@@ -1,0 +1,23 @@
+{
+  "jokeMonolithTestApp": {
+    "joke": {
+      "home": {
+        "title": "Jokes",
+        "createLabel": "Create a new Joke",
+        "createOrEditLabel": "Create or edit a Joke",
+        "notFound": "No Jokes found"
+      },
+      "created": "A new Joke is created with identifier {{ param }}",
+      "updated": "A Joke is updated with identifier {{ param }}",
+      "deleted": "A Joke is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Joke {{ id }}?"
+      },
+      "detail": {
+        "title": "Joke"
+      },
+      "text": "Text",
+      "like": "Like"
+    }
+  }
+}

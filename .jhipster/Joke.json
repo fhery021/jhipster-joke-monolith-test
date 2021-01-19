@@ -1,0 +1,31 @@
+{
+  "name": "Joke",
+  "fields": [
+    {
+      "fieldName": "text",
+      "fieldType": "String",
+      "fieldValidateRules": [
+        "required"
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "like",
+      "otherEntityRelationshipName": "joke",
+      "relationshipName": "like"
+    }
+  ],
+  "changelogDate": "20210119111103",
+  "entityTableName": "joke",
+  "dto": "no",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}

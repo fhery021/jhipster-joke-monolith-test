@@ -47,6 +47,9 @@ public class CacheConfiguration {
             createCache(cm, com.fhery021.joke.monolith.domain.User.class.getName());
             createCache(cm, com.fhery021.joke.monolith.domain.Authority.class.getName());
             createCache(cm, com.fhery021.joke.monolith.domain.User.class.getName() + ".authorities");
+            createCache(cm, com.fhery021.joke.monolith.domain.Joke.class.getName());
+            createCache(cm, com.fhery021.joke.monolith.domain.Joke.class.getName() + ".likes");
+            createCache(cm, com.fhery021.joke.monolith.domain.Like.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }
