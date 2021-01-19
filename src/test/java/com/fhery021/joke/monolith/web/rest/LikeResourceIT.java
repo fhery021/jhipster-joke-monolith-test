@@ -32,9 +32,6 @@ public class LikeResourceIT {
     private static final Long DEFAULT_USER_ID = 1L;
     private static final Long UPDATED_USER_ID = 2L;
 
-    private static final Long DEFAULT_JOKE_ID = 1L;
-    private static final Long UPDATED_JOKE_ID = 2L;
-
     @Autowired
     private LikeRepository likeRepository;
 
@@ -54,8 +51,7 @@ public class LikeResourceIT {
      */
     public static Like createEntity(EntityManager em) {
         Like like = new Like()
-            .userId(DEFAULT_USER_ID)
-            .jokeId(DEFAULT_JOKE_ID);
+            .userId(DEFAULT_USER_ID);
         return like;
     }
     /**
@@ -66,8 +62,7 @@ public class LikeResourceIT {
      */
     public static Like createUpdatedEntity(EntityManager em) {
         Like like = new Like()
-            .userId(UPDATED_USER_ID)
-            .jokeId(UPDATED_JOKE_ID);
+            .userId(UPDATED_USER_ID);
         return like;
     }
 
@@ -91,7 +86,6 @@ public class LikeResourceIT {
         assertThat(likeList).hasSize(databaseSizeBeforeCreate + 1);
         Like testLike = likeList.get(likeList.size() - 1);
         assertThat(testLike.getUserId()).isEqualTo(DEFAULT_USER_ID);
-        assertThat(testLike.getJokeId()).isEqualTo(DEFAULT_JOKE_ID);
     }
 
     @Test
@@ -135,25 +129,6 @@ public class LikeResourceIT {
 
     @Test
     @Transactional
-    public void checkJokeIdIsRequired() throws Exception {
-        int databaseSizeBeforeTest = likeRepository.findAll().size();
-        // set the field null
-        like.setJokeId(null);
-
-        // Create the Like, which fails.
-
-
-        restLikeMockMvc.perform(post("/api/likes")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(like)))
-            .andExpect(status().isBadRequest());
-
-        List<Like> likeList = likeRepository.findAll();
-        assertThat(likeList).hasSize(databaseSizeBeforeTest);
-    }
-
-    @Test
-    @Transactional
     public void getAllLikes() throws Exception {
         // Initialize the database
         likeRepository.saveAndFlush(like);
@@ -163,8 +138,7 @@ public class LikeResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(like.getId().intValue())))
-            .andExpect(jsonPath("$.[*].userId").value(hasItem(DEFAULT_USER_ID.intValue())))
-            .andExpect(jsonPath("$.[*].jokeId").value(hasItem(DEFAULT_JOKE_ID.intValue())));
+            .andExpect(jsonPath("$.[*].userId").value(hasItem(DEFAULT_USER_ID.intValue())));
     }
     
     @Test
@@ -178,8 +152,7 @@ public class LikeResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(like.getId().intValue()))
-            .andExpect(jsonPath("$.userId").value(DEFAULT_USER_ID.intValue()))
-            .andExpect(jsonPath("$.jokeId").value(DEFAULT_JOKE_ID.intValue()));
+            .andExpect(jsonPath("$.userId").value(DEFAULT_USER_ID.intValue()));
     }
     @Test
     @Transactional
@@ -202,8 +175,7 @@ public class LikeResourceIT {
         // Disconnect from session so that the updates on updatedLike are not directly saved in db
         em.detach(updatedLike);
         updatedLike
-            .userId(UPDATED_USER_ID)
-            .jokeId(UPDATED_JOKE_ID);
+            .userId(UPDATED_USER_ID);
 
         restLikeMockMvc.perform(put("/api/likes")
             .contentType(MediaType.APPLICATION_JSON)
@@ -215,7 +187,6 @@ public class LikeResourceIT {
         assertThat(likeList).hasSize(databaseSizeBeforeUpdate);
         Like testLike = likeList.get(likeList.size() - 1);
         assertThat(testLike.getUserId()).isEqualTo(UPDATED_USER_ID);
-        assertThat(testLike.getJokeId()).isEqualTo(UPDATED_JOKE_ID);
     }
 
     @Test

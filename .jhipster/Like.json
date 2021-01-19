@@ -7,13 +7,6 @@
       "fieldValidateRules": [
         "required"
       ]
-    },
-    {
-      "fieldName": "jokeId",
-      "fieldType": "Long",
-      "fieldValidateRules": [
-        "required"
-      ]
     }
   ],
   "relationships": [

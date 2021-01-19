@@ -17,7 +17,6 @@
         "title": "Like"
       },
       "userId": "User Id",
-      "jokeId": "Joke Id",
       "joke": "Joke"
     }
   }
