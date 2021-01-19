@@ -3,8 +3,7 @@ entity Joke {
 }
 
 entity Like {
-	UserId Long required,
-    JokeId Long required
+	userId Long required
 }
 
 relationship OneToMany {

@@ -20,9 +20,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="joke_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="joke_id" type="bigint">
                 <constraints nullable="true" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
@@ -49,7 +46,6 @@
                   tableName="jhi_like">
             <column name="id" type="numeric"/>
             <column name="user_id" type="numeric"/>
-            <column name="joke_id" type="numeric"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>

@@ -27,10 +27,6 @@ public class Like implements Serializable {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @NotNull
-    @Column(name = "joke_id", nullable = false)
-    private Long jokeId;
-
     @ManyToOne
     @JsonIgnoreProperties(value = "likes", allowSetters = true)
     private Joke joke;
@@ -55,19 +51,6 @@ public class Like implements Serializable {
 
     public void setUserId(Long userId) {
         this.userId = userId;
-    }
-
-    public Long getJokeId() {
-        return jokeId;
-    }
-
-    public Like jokeId(Long jokeId) {
-        this.jokeId = jokeId;
-        return this;
-    }
-
-    public void setJokeId(Long jokeId) {
-        this.jokeId = jokeId;
     }
 
     public Joke getJoke() {
@@ -106,7 +89,6 @@ public class Like implements Serializable {
         return "Like{" +
             "id=" + getId() +
             ", userId=" + getUserId() +
-            ", jokeId=" + getJokeId() +
             "}";
     }
 }

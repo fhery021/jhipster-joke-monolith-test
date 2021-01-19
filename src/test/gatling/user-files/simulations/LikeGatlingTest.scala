@@ -73,7 +73,6 @@ class LikeGatlingTest extends Simulation {
             .body(StringBody("""{
                 "id":null
                 , "userId":null
-                , "jokeId":null
                 }""")).asJson
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_like_url"))).exitHereIfFailed

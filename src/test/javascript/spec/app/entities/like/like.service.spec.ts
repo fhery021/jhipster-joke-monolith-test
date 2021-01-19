@@ -20,7 +20,7 @@ describe('Service Tests', () => {
       service = injector.get(LikeService);
       httpMock = injector.get(HttpTestingController);
 
-      elemDefault = new Like(0, 0, 0);
+      elemDefault = new Like(0, 0);
     });
 
     describe('Service methods', () => {
@@ -55,7 +55,6 @@ describe('Service Tests', () => {
         const returnedFromService = Object.assign(
           {
             userId: 1,
-            jokeId: 1,
           },
           elemDefault
         );
@@ -73,7 +72,6 @@ describe('Service Tests', () => {
         const returnedFromService = Object.assign(
           {
             userId: 1,
-            jokeId: 1,
           },
           elemDefault
         );
