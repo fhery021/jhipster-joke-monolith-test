@@ -12,12 +12,24 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-control-label" jhiTranslate="jokeMonolithTestApp.joke.text" for="field_text">Text</label>
-                    <input type="text" class="form-control" name="text" id="field_text"
-                           formControlName="text"/>
-                    <div *ngIf="editForm.get('text')!.invalid && (editForm.get('text')!.dirty || editForm.get('text')!.touched)">
+                    <label class="form-control-label" jhiTranslate="jokeMonolithTestApp.joke.question" for="field_question">Question</label>
+                    <input type="text" class="form-control" name="question" id="field_question"
+                           formControlName="question"/>
+                    <div *ngIf="editForm.get('question')!.invalid && (editForm.get('question')!.dirty || editForm.get('question')!.touched)">
                         <small class="form-text text-danger"
-                               *ngIf="editForm.get('text')?.errors?.required" jhiTranslate="entity.validation.required">
+                               *ngIf="editForm.get('question')?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="jokeMonolithTestApp.joke.answer" for="field_answer">Answer</label>
+                    <input type="text" class="form-control" name="answer" id="field_answer"
+                           formControlName="answer"/>
+                    <div *ngIf="editForm.get('answer')!.invalid && (editForm.get('answer')!.dirty || editForm.get('answer')!.touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('answer')?.errors?.required" jhiTranslate="entity.validation.required">
                         This field is required.
                         </small>
                     </div>

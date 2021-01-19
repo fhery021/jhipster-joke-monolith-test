@@ -16,7 +16,8 @@
       "detail": {
         "title": "Joke"
       },
-      "text": "Text",
+      "question": "Question",
+      "answer": "Answer",
       "like": "Like"
     }
   }

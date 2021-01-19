@@ -25,8 +25,12 @@ public class Joke implements Serializable {
     private Long id;
 
     @NotNull
-    @Column(name = "text", nullable = false)
-    private String text;
+    @Column(name = "question", nullable = false)
+    private String question;
+
+    @NotNull
+    @Column(name = "answer", nullable = false)
+    private String answer;
 
     @OneToMany(mappedBy = "joke")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -41,17 +45,30 @@ public class Joke implements Serializable {
         this.id = id;
     }
 
-    public String getText() {
-        return text;
+    public String getQuestion() {
+        return question;
     }
 
-    public Joke text(String text) {
-        this.text = text;
+    public Joke question(String question) {
+        this.question = question;
         return this;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setQuestion(String question) {
+        this.question = question;
+    }
+
+    public String getAnswer() {
+        return answer;
+    }
+
+    public Joke answer(String answer) {
+        this.answer = answer;
+        return this;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
     }
 
     public Set<Like> getLikes() {
@@ -101,7 +118,8 @@ public class Joke implements Serializable {
     public String toString() {
         return "Joke{" +
             "id=" + getId() +
-            ", text='" + getText() + "'" +
+            ", question='" + getQuestion() + "'" +
+            ", answer='" + getAnswer() + "'" +
             "}";
     }
 }
