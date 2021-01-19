@@ -1,5 +1,6 @@
 entity Joke {
-	text String required
+	question String required
+    answer String required
 }
 
 entity Like {
