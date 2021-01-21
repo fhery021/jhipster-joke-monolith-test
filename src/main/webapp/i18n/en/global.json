@@ -9,6 +9,7 @@
         "main": "Entities",
         "joke": "Joke",
         "like": "Like",
+        "reaction": "Reaction",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {

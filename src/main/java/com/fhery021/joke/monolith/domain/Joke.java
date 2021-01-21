@@ -34,7 +34,7 @@ public class Joke implements Serializable {
 
     @OneToMany(mappedBy = "joke")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    private Set<Like> likes = new HashSet<>();
+    private Set<Reaction> reactions = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
@@ -71,29 +71,29 @@ public class Joke implements Serializable {
         this.answer = answer;
     }
 
-    public Set<Like> getLikes() {
-        return likes;
+    public Set<Reaction> getReactions() {
+        return reactions;
     }
 
-    public Joke likes(Set<Like> likes) {
-        this.likes = likes;
+    public Joke reactions(Set<Reaction> reactions) {
+        this.reactions = reactions;
         return this;
     }
 
-    public Joke addLike(Like like) {
-        this.likes.add(like);
-        like.setJoke(this);
+    public Joke addReaction(Reaction reaction) {
+        this.reactions.add(reaction);
+        reaction.setJoke(this);
         return this;
     }
 
-    public Joke removeLike(Like like) {
-        this.likes.remove(like);
-        like.setJoke(null);
+    public Joke removeReaction(Reaction reaction) {
+        this.reactions.remove(reaction);
+        reaction.setJoke(null);
         return this;
     }
 
-    public void setLikes(Set<Like> likes) {
-        this.likes = likes;
+    public void setReactions(Set<Reaction> reactions) {
+        this.reactions = reactions;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
