@@ -50,6 +50,8 @@ public class CacheConfiguration {
             createCache(cm, com.fhery021.joke.monolith.domain.Joke.class.getName());
             createCache(cm, com.fhery021.joke.monolith.domain.Joke.class.getName() + ".likes");
             createCache(cm, com.fhery021.joke.monolith.domain.Like.class.getName());
+            createCache(cm, com.fhery021.joke.monolith.domain.Joke.class.getName() + ".reactions");
+            createCache(cm, com.fhery021.joke.monolith.domain.Reaction.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

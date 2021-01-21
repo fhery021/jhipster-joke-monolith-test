@@ -19,9 +19,9 @@
   "relationships": [
     {
       "relationshipType": "one-to-many",
-      "otherEntityName": "like",
+      "otherEntityName": "reaction",
       "otherEntityRelationshipName": "joke",
-      "relationshipName": "like"
+      "relationshipName": "reaction"
     }
   ],
   "changelogDate": "20210119111103",

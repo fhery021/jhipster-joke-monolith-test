@@ -3,16 +3,17 @@ entity Joke {
     answer String required
 }
 
-entity Like {
-	userId Long required
+entity Reaction {
+	comment String
+	like Boolean required
 }
 
 relationship OneToMany {
-	Joke to	Like{joke}
+	Joke to	Reaction{joke}
 }
 
 // Set service options to all except few
-service all with serviceImpl except Like
+service all with serviceImpl except Reaction
 
 // Set pagination options
 paginate Joke with infinite-scroll

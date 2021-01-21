@@ -2,10 +2,9 @@
     <h2 id="page-heading">
         <span jhiTranslate="jokeMonolithTestApp.joke.home.title">Jokes</span>
 
-        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-joke"
-                [routerLink]="['/joke/new']">
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-joke" [routerLink]="['/joke/new']">
             <fa-icon icon="plus"></fa-icon>
-            <span jhiTranslate="jokeMonolithTestApp.joke.home.createLabel">
+            <span  jhiTranslate="jokeMonolithTestApp.joke.home.createLabel">
             Create a new Joke
             </span>
         </button>
@@ -19,31 +18,46 @@
         <span jhiTranslate="jokeMonolithTestApp.joke.home.notFound">No jokes found</span>
     </div>
 
-    <!-- [routerLink]="['/joke', joke.id, 'view']"-->
+    <div class="table-responsive" id="entities" *ngIf="jokes && jokes.length > 0">
+        <table class="table table-striped" aria-describedby="page-heading">
+            <thead>
+                <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="reset.bind(this)">
+                    <th scope="col"  jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="question"><span jhiTranslate="jokeMonolithTestApp.joke.question">Question</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="answer"><span jhiTranslate="jokeMonolithTestApp.joke.answer">Answer</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">
+                <tr *ngFor="let joke of jokes ;trackBy: trackId">
+                    <td><a [routerLink]="['/joke', joke.id, 'view']">{{ joke.id }}</a></td>
+                    <td>{{ joke.question }}</td>
+                    <td>{{ joke.answer }}</td>
+                    <td class="text-right">
+                        <div class="btn-group">
+                            <button type="submit"
+                                    [routerLink]="['/joke', joke.id, 'view']"
+                                    class="btn btn-info btn-sm">
+                                <fa-icon icon="eye"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                            </button>
 
-    <div class="container">
-        <div *ngFor="let joke of jokes" class="card w-75">
-            <div class="card-body">
-                <h3 class="card-title">{{ joke.question }}</h3>
-                <h4 class="card-text text-right">{{ joke.answer }}</h4>
+                            <button type="submit"
+                                    [routerLink]="['/joke', joke.id, 'edit']"
+                                    class="btn btn-primary btn-sm">
+                                <fa-icon icon="pencil-alt"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                            </button>
 
-                <button type="button" [routerLink]="['/joke', joke.id, 'edit']"
-                        class="btn btn-info btn-sm">
-                    <fa-icon icon="comments"></fa-icon>
-                    <span class="d-none d-md-inline">Comment</span>
-                </button>
-                <button type="button"
-                        class="btn btn-primary btn-sm">
-                    <fa-icon icon="thumbs-up"></fa-icon>
-                    <span class="d-none d-md-inline">Like</span>
-                </button>
-                <button type="submit" (click)="delete(joke)"
-                        class="btn btn-danger btn-sm">
-                    <fa-icon icon="times"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-                </button>
-            </div>
-        </div>
+                            <button type="submit" (click)="delete(joke)"
+                                    class="btn btn-danger btn-sm">
+                                <fa-icon icon="times"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-
 </div>

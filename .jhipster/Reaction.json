@@ -1,0 +1,36 @@
+{
+  "name": "Reaction",
+  "fields": [
+    {
+      "fieldName": "comment",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "like",
+      "fieldType": "Boolean",
+      "fieldValidateRules": [
+        "required"
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "joke",
+      "otherEntityRelationshipName": "reaction",
+      "relationshipName": "joke",
+      "otherEntityField": "id"
+    }
+  ],
+  "changelogDate": "20210121151622",
+  "entityTableName": "reaction",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}
