@@ -36,6 +36,7 @@ import {
   faHome,
   faComments,
   faThumbsUp,
+  faSmileWink,
 } from '@fortawesome/free-solid-svg-icons';
 
 export const fontAwesomeIcons = [
@@ -76,4 +77,5 @@ export const fontAwesomeIcons = [
   faAsterisk,
   faComments,
   faThumbsUp,
+  faSmileWink,
 ];
