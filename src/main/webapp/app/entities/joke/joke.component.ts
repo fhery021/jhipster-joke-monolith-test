@@ -9,6 +9,7 @@ import { IJoke } from 'app/shared/model/joke.model';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { JokeService } from './joke.service';
 import { JokeDeleteDialogComponent } from './joke-delete-dialog.component';
+import { Reaction } from 'app/shared/model/reaction.model';
 
 @Component({
   selector: 'jhi-joke',
@@ -83,6 +84,15 @@ export class JokeComponent implements OnInit, OnDestroy {
   delete(joke: IJoke): void {
     const modalRef = this.modalService.open(JokeDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.joke = joke;
+  }
+
+  like(jokeId: number | undefined): void {
+    // TODO userId
+    // this.jokeService.like(jokeId, 0);
+  }
+
+  likes(joke: IJoke): number | undefined {
+    return joke.reactions?.filter(j => j.like === true).length;
   }
 
   sort(): string[] {
