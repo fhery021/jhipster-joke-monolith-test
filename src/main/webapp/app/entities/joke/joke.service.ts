@@ -36,7 +36,12 @@ export class JokeService {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
-  // like(id: number, userId: number){
+  // like(joke: IJoke, userId: string): Observable<HttpResponse<{}>>{
+  //   // joke.reactions?.push({
 
+  //   // })
+  //   // return this.http.put<IJoke>(this.resourceUrl,{})
+  //   // joke.reactions.
+  //   return null;
   // }
 }

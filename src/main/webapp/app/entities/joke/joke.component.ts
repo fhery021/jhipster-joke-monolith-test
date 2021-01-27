@@ -9,7 +9,8 @@ import { IJoke } from 'app/shared/model/joke.model';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { JokeService } from './joke.service';
 import { JokeDeleteDialogComponent } from './joke-delete-dialog.component';
-import { Reaction } from 'app/shared/model/reaction.model';
+import { AccountService } from 'app/core/auth/account.service';
+import { Account } from 'app/core/user/account.model';
 
 @Component({
   selector: 'jhi-joke',
@@ -23,12 +24,15 @@ export class JokeComponent implements OnInit, OnDestroy {
   page: number;
   predicate: string;
   ascending: boolean;
+  account: Account | null = null;
+  authSubscription?: Subscription;
 
   constructor(
     protected jokeService: JokeService,
     protected eventManager: JhiEventManager,
     protected modalService: NgbModal,
-    protected parseLinks: JhiParseLinks
+    protected parseLinks: JhiParseLinks,
+    private accountService: AccountService
   ) {
     this.jokes = [];
     this.itemsPerPage = ITEMS_PER_PAGE;
@@ -64,11 +68,17 @@ export class JokeComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadAll();
     this.registerChangeInJokes();
+    this.authSubscription = this.accountService.getAuthenticationState().subscribe({
+      next: account => (this.account = account),
+    });
   }
 
   ngOnDestroy(): void {
     if (this.eventSubscriber) {
       this.eventManager.destroy(this.eventSubscriber);
+    }
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
     }
   }
 
@@ -86,9 +96,10 @@ export class JokeComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.joke = joke;
   }
 
-  like(jokeId: number | undefined): void {
-    // TODO userId
-    // this.jokeService.like(jokeId, 0);
+  like(joke: IJoke): void {
+    if (this.account?.login !== undefined) {
+      // this.jokeService.like(joke, this.account?.login);
+    }
   }
 
   likes(joke: IJoke): number | undefined {
