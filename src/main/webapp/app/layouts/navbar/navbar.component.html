@@ -17,15 +17,6 @@
                 </a>
             </li>
 
-            <li *jhiHasAnyAuthority="'ROLE_USER'" class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-                <a class="nav-link" routerLink="joke" (click)="collapseNavbar()">
-                    <span>
-                        <fa-icon icon="smile-wink"></fa-icon>
-                        <span>Joke Reading</span>
-                    </span>
-                </a>
-            </li>
-
             <div *jhiHasAnyAuthority="'ROLE_ADMIN'">
             <!-- jhipster-needle-add-element-to-menu - JHipster will add new menu items here -->
                 <li *ngSwitchCase="true" ngbDropdown class="nav-item dropdown pointer" display="dynamic" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
