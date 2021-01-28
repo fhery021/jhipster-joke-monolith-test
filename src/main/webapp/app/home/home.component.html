@@ -43,8 +43,8 @@
             <div *ngFor="let joke of jokes" class="card w-75 mb-3">
                 <div class="card pt-3">
                     <div class="card-body">
-                        <h3 class="card-title">{{ joke.question }}</h1>
-                            <h4 class="card-text text-right">{{ joke.answer }}</h2>
+                        <h3 class="card-title">{{ joke.question }}</h3>
+                        <h4 class="card-text text-right">{{ joke.answer }}</h4>
                     </div>
                     <div class="card-footer">
                         <button type="button" [routerLink]="['/joke', joke.id, 'edit']" class="btn btn-info btn-sm">

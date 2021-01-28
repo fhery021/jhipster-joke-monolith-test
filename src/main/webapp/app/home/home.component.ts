@@ -44,6 +44,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private likeService: LikeService
   ) {
     this.jokes = [];
+    this.likes = [];
     this.itemsPerPage = ITEMS_PER_PAGE;
     this.page = 0;
     this.links = {
@@ -54,7 +55,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.loadAll();
     this.registerChangeInJokes();
     this.registerChangeInLikes();
     this.authSubscription = this.accountService.getAuthenticationState().subscribe(account => {
@@ -77,13 +77,18 @@ export class HomeComponent implements OnInit, OnDestroy {
         sort: this.sort(),
       })
       .subscribe((res: HttpResponse<IJoke[]>) => this.paginateJokes(res.body, res.headers));
-    this.likeService.query().subscribe((res: HttpResponse<ILike[]>) => (this.likes = res.body || []));
+    this.loadLikes();
   }
 
-  reset(): void {
+  private reset(): void {
     this.page = 0;
     this.jokes = [];
+    this.likes = [];
     this.loadAll();
+  }
+
+  private loadLikes(): void {
+    this.likeService.query().subscribe((res: HttpResponse<ILike[]>) => (this.likes = res.body || []));
   }
 
   loadPage(page: number): void {
@@ -101,7 +106,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   registerChangeInLikes(): void {
-    this.likesSubscriber = this.eventManager.subscribe('likeListModification', () => this.loadAll());
+    this.likesSubscriber = this.eventManager.subscribe('likeListModification', () => this.loadLikes());
   }
 
   delete(joke: IJoke): void {
@@ -123,7 +128,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.account !== null) {
       const like = this.likes?.find(l => l.accountId === this.account?.login && l.joke?.id === joke.id);
       if (like !== undefined && like.id !== undefined) {
-        this.subscribeToSaveResponse(this.likeService.delete(like.id));
+        this.subscribeToSaveLikeResponse(this.likeService.delete(like.id));
       }
     }
   }
@@ -131,7 +136,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   likeJoke(joke: IJoke): void {
     if (this.account !== null) {
       const newLike = this.newLike(joke, this.account.login);
-      this.subscribeToSaveResponse(this.likeService.create(newLike));
+      this.subscribeToSaveLikeResponse(this.likeService.create(newLike));
     }
   }
 
@@ -148,16 +153,16 @@ export class HomeComponent implements OnInit, OnDestroy {
     };
   }
 
-  protected subscribeToSaveResponse(result: Observable<HttpResponse<ILike>>): void {
+  private subscribeToSaveLikeResponse(result: Observable<HttpResponse<ILike>>): void {
     result.subscribe(
       () => this.onSaveSuccess(),
       () => this.onSaveError()
     );
   }
 
-  protected onSaveSuccess(): void {
+  private onSaveSuccess(): void {
+    this.eventManager.broadcast('likeListModification');
     this.isSaving = false;
-    this.loadAll();
   }
 
   protected onSaveError(): void {
