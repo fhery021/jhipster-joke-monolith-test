@@ -24,6 +24,7 @@
                 <tr>
                     <th scope="col" ><span jhiTranslate="global.field.id">ID</span></th>
                     <th scope="col" ><span jhiTranslate="jokeMonolithTestApp.comment.text">Text</span></th>
+                    <th scope="col" ><span jhiTranslate="jokeMonolithTestApp.comment.accountId">Account Id</span></th>
                     <th scope="col" ><span jhiTranslate="jokeMonolithTestApp.comment.joke">Joke</span></th>
                     <th scope="col"></th>
                 </tr>
@@ -32,6 +33,7 @@
                 <tr *ngFor="let comment of comments ;trackBy: trackId">
                     <td><a [routerLink]="['/comment', comment.id, 'view']">{{ comment.id }}</a></td>
                     <td>{{ comment.text }}</td>
+                    <td>{{ comment.accountId }}</td>
                     <td>
                         <div *ngIf="comment.joke">
                             <a [routerLink]="['/joke', comment.joke?.id, 'view']" >{{ comment.joke?.id }}</a>

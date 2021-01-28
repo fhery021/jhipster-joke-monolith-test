@@ -21,6 +21,7 @@ export class CommentUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [],
     text: [null, [Validators.required]],
+    accountId: [null, [Validators.required]],
     joke: [],
   });
 
@@ -43,6 +44,7 @@ export class CommentUpdateComponent implements OnInit {
     this.editForm.patchValue({
       id: comment.id,
       text: comment.text,
+      accountId: comment.accountId,
       joke: comment.joke,
     });
   }
@@ -66,6 +68,7 @@ export class CommentUpdateComponent implements OnInit {
       ...new Comment(),
       id: this.editForm.get(['id'])!.value,
       text: this.editForm.get(['text'])!.value,
+      accountId: this.editForm.get(['accountId'])!.value,
       joke: this.editForm.get(['joke'])!.value,
     };
   }

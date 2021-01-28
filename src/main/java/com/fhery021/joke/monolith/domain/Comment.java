@@ -24,6 +24,10 @@ public class Comment implements Serializable {
     @Column(name = "text", nullable = false)
     private String text;
 
+    @NotNull
+    @Column(name = "account_id", nullable = false)
+    private String accountId;
+
     @ManyToOne
     @JsonIgnoreProperties(value = "comments", allowSetters = true)
     private Joke joke;
@@ -48,6 +52,19 @@ public class Comment implements Serializable {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public Comment accountId(String accountId) {
+        this.accountId = accountId;
+        return this;
+    }
+
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
     }
 
     public Joke getJoke() {
@@ -87,6 +104,7 @@ public class Comment implements Serializable {
         return "Comment{" +
             "id=" + getId() +
             ", text='" + getText() + "'" +
+            ", accountId='" + getAccountId() + "'" +
             "}";
     }
 }

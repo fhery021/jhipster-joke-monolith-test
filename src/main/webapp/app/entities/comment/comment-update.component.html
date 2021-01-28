@@ -24,6 +24,18 @@
                 </div>
 
                 <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="jokeMonolithTestApp.comment.accountId" for="field_accountId">Account Id</label>
+                    <input type="text" class="form-control" name="accountId" id="field_accountId"
+                           formControlName="accountId"/>
+                    <div *ngIf="editForm.get('accountId')!.invalid && (editForm.get('accountId')!.dirty || editForm.get('accountId')!.touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('accountId')?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
                     <label class="form-control-label" jhiTranslate="jokeMonolithTestApp.comment.joke" for="field_joke">Joke</label>
                     <select class="form-control" id="field_joke" name="joke" formControlName="joke">
                         <option [ngValue]="null"></option>

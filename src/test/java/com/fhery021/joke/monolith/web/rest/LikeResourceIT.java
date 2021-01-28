@@ -30,6 +30,9 @@ public class LikeResourceIT {
     private static final Boolean DEFAULT_LIKED = false;
     private static final Boolean UPDATED_LIKED = true;
 
+    private static final String DEFAULT_ACCOUNT_ID = "AAAAAAAAAA";
+    private static final String UPDATED_ACCOUNT_ID = "BBBBBBBBBB";
+
     @Autowired
     private LikeRepository likeRepository;
 
@@ -48,7 +51,7 @@ public class LikeResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Like createEntity(EntityManager em) {
-        Like like = new Like().liked(DEFAULT_LIKED);
+        Like like = new Like().liked(DEFAULT_LIKED).accountId(DEFAULT_ACCOUNT_ID);
         return like;
     }
 
@@ -59,7 +62,7 @@ public class LikeResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Like createUpdatedEntity(EntityManager em) {
-        Like like = new Like().liked(UPDATED_LIKED);
+        Like like = new Like().liked(UPDATED_LIKED).accountId(UPDATED_ACCOUNT_ID);
         return like;
     }
 
@@ -82,6 +85,7 @@ public class LikeResourceIT {
         assertThat(likeList).hasSize(databaseSizeBeforeCreate + 1);
         Like testLike = likeList.get(likeList.size() - 1);
         assertThat(testLike.isLiked()).isEqualTo(DEFAULT_LIKED);
+        assertThat(testLike.getAccountId()).isEqualTo(DEFAULT_ACCOUNT_ID);
     }
 
     @Test
@@ -121,6 +125,23 @@ public class LikeResourceIT {
 
     @Test
     @Transactional
+    public void checkAccountIdIsRequired() throws Exception {
+        int databaseSizeBeforeTest = likeRepository.findAll().size();
+        // set the field null
+        like.setAccountId(null);
+
+        // Create the Like, which fails.
+
+        restLikeMockMvc
+            .perform(post("/api/likes").contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(like)))
+            .andExpect(status().isBadRequest());
+
+        List<Like> likeList = likeRepository.findAll();
+        assertThat(likeList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     public void getAllLikes() throws Exception {
         // Initialize the database
         likeRepository.saveAndFlush(like);
@@ -131,7 +152,8 @@ public class LikeResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(like.getId().intValue())))
-            .andExpect(jsonPath("$.[*].liked").value(hasItem(DEFAULT_LIKED.booleanValue())));
+            .andExpect(jsonPath("$.[*].liked").value(hasItem(DEFAULT_LIKED.booleanValue())))
+            .andExpect(jsonPath("$.[*].accountId").value(hasItem(DEFAULT_ACCOUNT_ID)));
     }
 
     @Test
@@ -146,7 +168,8 @@ public class LikeResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(like.getId().intValue()))
-            .andExpect(jsonPath("$.liked").value(DEFAULT_LIKED.booleanValue()));
+            .andExpect(jsonPath("$.liked").value(DEFAULT_LIKED.booleanValue()))
+            .andExpect(jsonPath("$.accountId").value(DEFAULT_ACCOUNT_ID));
     }
 
     @Test
@@ -168,7 +191,7 @@ public class LikeResourceIT {
         Like updatedLike = likeRepository.findById(like.getId()).get();
         // Disconnect from session so that the updates on updatedLike are not directly saved in db
         em.detach(updatedLike);
-        updatedLike.liked(UPDATED_LIKED);
+        updatedLike.liked(UPDATED_LIKED).accountId(UPDATED_ACCOUNT_ID);
 
         restLikeMockMvc
             .perform(put("/api/likes").contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(updatedLike)))
@@ -179,6 +202,7 @@ public class LikeResourceIT {
         assertThat(likeList).hasSize(databaseSizeBeforeUpdate);
         Like testLike = likeList.get(likeList.size() - 1);
         assertThat(testLike.isLiked()).isEqualTo(UPDATED_LIKED);
+        assertThat(testLike.getAccountId()).isEqualTo(UPDATED_ACCOUNT_ID);
     }
 
     @Test

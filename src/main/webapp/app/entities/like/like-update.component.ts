@@ -21,6 +21,7 @@ export class LikeUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [],
     liked: [null, [Validators.required]],
+    accountId: [null, [Validators.required]],
     joke: [],
   });
 
@@ -43,6 +44,7 @@ export class LikeUpdateComponent implements OnInit {
     this.editForm.patchValue({
       id: like.id,
       liked: like.liked,
+      accountId: like.accountId,
       joke: like.joke,
     });
   }
@@ -66,6 +68,7 @@ export class LikeUpdateComponent implements OnInit {
       ...new Like(),
       id: this.editForm.get(['id'])!.value,
       liked: this.editForm.get(['liked'])!.value,
+      accountId: this.editForm.get(['accountId'])!.value,
       joke: this.editForm.get(['joke'])!.value,
     };
   }

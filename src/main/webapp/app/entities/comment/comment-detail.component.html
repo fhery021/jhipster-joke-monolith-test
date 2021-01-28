@@ -12,6 +12,10 @@
                 <dd>
                     <span>{{ comment.text }}</span>
                 </dd>
+                <dt><span jhiTranslate="jokeMonolithTestApp.comment.accountId">Account Id</span></dt>
+                <dd>
+                    <span>{{ comment.accountId }}</span>
+                </dd>
                 <dt><span jhiTranslate="jokeMonolithTestApp.comment.joke">Joke</span></dt>
                 <dd>
                     <div *ngIf="comment.joke">

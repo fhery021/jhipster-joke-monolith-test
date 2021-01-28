@@ -24,6 +24,7 @@
                 <tr>
                     <th scope="col" ><span jhiTranslate="global.field.id">ID</span></th>
                     <th scope="col" ><span jhiTranslate="jokeMonolithTestApp.like.liked">Liked</span></th>
+                    <th scope="col" ><span jhiTranslate="jokeMonolithTestApp.like.accountId">Account Id</span></th>
                     <th scope="col" ><span jhiTranslate="jokeMonolithTestApp.like.joke">Joke</span></th>
                     <th scope="col"></th>
                 </tr>
@@ -32,6 +33,7 @@
                 <tr *ngFor="let like of likes ;trackBy: trackId">
                     <td><a [routerLink]="['/like', like.id, 'view']">{{ like.id }}</a></td>
                     <td>{{ like.liked }}</td>
+                    <td>{{ like.accountId }}</td>
                     <td>
                         <div *ngIf="like.joke">
                             <a [routerLink]="['/joke', like.joke?.id, 'view']" >{{ like.joke?.id }}</a>

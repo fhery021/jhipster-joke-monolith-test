@@ -73,6 +73,7 @@ class CommentGatlingTest extends Simulation {
             .body(StringBody("""{
                 "id":null
                 , "text":"SAMPLE_TEXT"
+                , "accountId":"SAMPLE_TEXT"
                 }""")).asJson
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_comment_url"))).exitHereIfFailed

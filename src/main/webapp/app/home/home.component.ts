@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
-import { LoginModalService } from 'app/core/login/login-modal.service';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/user/account.model';
 
@@ -14,6 +13,8 @@ import { IJoke } from 'app/shared/model/joke.model';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { JokeService } from '../entities/joke/joke.service';
 import { JokeDeleteDialogComponent } from '../entities/joke/joke-delete-dialog.component';
+import { LikeService } from 'app/entities/like/like.service';
+import { ILike, Like } from 'app/shared/model/like.model';
 
 @Component({
   selector: 'jhi-home',
@@ -21,8 +22,11 @@ import { JokeDeleteDialogComponent } from '../entities/joke/joke-delete-dialog.c
   styleUrls: ['home.scss'],
 })
 export class HomeComponent implements OnInit, OnDestroy {
+  isSaving = false;
   jokes: IJoke[];
-  eventSubscriber?: Subscription;
+  likes?: ILike[];
+  jokesSubscriber?: Subscription;
+  likesSubscriber?: Subscription;
   itemsPerPage: number;
   links: any;
   page: number;
@@ -32,12 +36,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   authSubscription?: Subscription;
 
   constructor(
-    private loginModalService: LoginModalService,
     protected jokeService: JokeService,
     protected eventManager: JhiEventManager,
     protected modalService: NgbModal,
     protected parseLinks: JhiParseLinks,
-    private accountService: AccountService
+    private accountService: AccountService,
+    private likeService: LikeService
   ) {
     this.jokes = [];
     this.itemsPerPage = ITEMS_PER_PAGE;
@@ -52,6 +56,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadAll();
     this.registerChangeInJokes();
+    this.registerChangeInLikes();
     this.authSubscription = this.accountService.getAuthenticationState().subscribe(account => {
       this.account = account;
       if (account !== null) {
@@ -72,6 +77,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         sort: this.sort(),
       })
       .subscribe((res: HttpResponse<IJoke[]>) => this.paginateJokes(res.body, res.headers));
+    this.likeService.query().subscribe((res: HttpResponse<ILike[]>) => (this.likes = res.body || []));
   }
 
   reset(): void {
@@ -91,7 +97,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   registerChangeInJokes(): void {
-    this.eventSubscriber = this.eventManager.subscribe('jokeListModification', () => this.reset());
+    this.jokesSubscriber = this.eventManager.subscribe('jokeListModification', () => this.reset());
+  }
+
+  registerChangeInLikes(): void {
+    this.likesSubscriber = this.eventManager.subscribe('likeListModification', () => this.loadAll());
   }
 
   delete(joke: IJoke): void {
@@ -99,14 +109,74 @@ export class HomeComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.joke = joke;
   }
 
-  like(joke: IJoke): void {
-    if (this.account?.login !== undefined) {
-      // this.jokeService.like(joke, this.account?.login);
+  onLike(joke: IJoke): void {
+    this.isSaving = true;
+
+    if (this.alreadyLiked(joke)) {
+      this.dislikeJoke(joke);
+    } else {
+      this.likeJoke(joke);
     }
   }
 
-  likes(joke: IJoke): number | undefined {
-    return joke.likes?.filter(j => j.liked === true).length;
+  dislikeJoke(joke: IJoke): void {
+    if (this.account !== null) {
+      const like = this.likes?.find(l => l.accountId === this.account?.login && l.joke?.id === joke.id);
+      if (like !== undefined && like.id !== undefined) {
+        this.subscribeToSaveResponse(this.likeService.delete(like.id));
+      }
+    }
+  }
+
+  likeJoke(joke: IJoke): void {
+    if (this.account !== null) {
+      const newLike = this.newLike(joke, this.account.login);
+      this.subscribeToSaveResponse(this.likeService.create(newLike));
+    }
+  }
+
+  private alreadyLiked(joke: IJoke): boolean | undefined {
+    return this.likes?.some(l => l.joke?.id === joke.id && l.accountId === this.account?.login);
+  }
+
+  private newLike(joke: IJoke, accountId: string): ILike {
+    return {
+      ...new Like(),
+      liked: true,
+      joke,
+      accountId,
+    };
+  }
+
+  protected subscribeToSaveResponse(result: Observable<HttpResponse<ILike>>): void {
+    result.subscribe(
+      () => this.onSaveSuccess(),
+      () => this.onSaveError()
+    );
+  }
+
+  protected onSaveSuccess(): void {
+    this.isSaving = false;
+    this.loadAll();
+  }
+
+  protected onSaveError(): void {
+    this.isSaving = false;
+  }
+
+  getLikesMessage(joke: IJoke): string {
+    const likes = this.likes?.filter(l => l.joke?.id === joke.id).length;
+    switch (likes) {
+      case 0: {
+        return 'Be the first who likes this joke.';
+      }
+      case 1: {
+        return '1 like';
+      }
+      default: {
+        return likes + ' likes';
+      }
+    }
   }
 
   sort(): string[] {
@@ -130,6 +200,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.authSubscription) {
       this.authSubscription.unsubscribe();
+    }
+    if (this.jokesSubscriber) {
+      this.eventManager.destroy(this.jokesSubscriber);
+    }
+    if (this.likesSubscriber) {
+      this.eventManager.destroy(this.likesSubscriber);
     }
   }
 }

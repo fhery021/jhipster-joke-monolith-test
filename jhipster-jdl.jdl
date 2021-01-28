@@ -5,10 +5,12 @@ entity Joke {
 
 entity Comment {
 	text String required
+    accountId String required
 }
 
 entity Like {
 	liked Boolean required
+    accountId String required
 }
 
 relationship OneToMany {

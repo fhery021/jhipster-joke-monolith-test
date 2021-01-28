@@ -30,6 +30,9 @@ public class CommentResourceIT {
     private static final String DEFAULT_TEXT = "AAAAAAAAAA";
     private static final String UPDATED_TEXT = "BBBBBBBBBB";
 
+    private static final String DEFAULT_ACCOUNT_ID = "AAAAAAAAAA";
+    private static final String UPDATED_ACCOUNT_ID = "BBBBBBBBBB";
+
     @Autowired
     private CommentRepository commentRepository;
 
@@ -48,7 +51,7 @@ public class CommentResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Comment createEntity(EntityManager em) {
-        Comment comment = new Comment().text(DEFAULT_TEXT);
+        Comment comment = new Comment().text(DEFAULT_TEXT).accountId(DEFAULT_ACCOUNT_ID);
         return comment;
     }
 
@@ -59,7 +62,7 @@ public class CommentResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Comment createUpdatedEntity(EntityManager em) {
-        Comment comment = new Comment().text(UPDATED_TEXT);
+        Comment comment = new Comment().text(UPDATED_TEXT).accountId(UPDATED_ACCOUNT_ID);
         return comment;
     }
 
@@ -82,6 +85,7 @@ public class CommentResourceIT {
         assertThat(commentList).hasSize(databaseSizeBeforeCreate + 1);
         Comment testComment = commentList.get(commentList.size() - 1);
         assertThat(testComment.getText()).isEqualTo(DEFAULT_TEXT);
+        assertThat(testComment.getAccountId()).isEqualTo(DEFAULT_ACCOUNT_ID);
     }
 
     @Test
@@ -121,6 +125,23 @@ public class CommentResourceIT {
 
     @Test
     @Transactional
+    public void checkAccountIdIsRequired() throws Exception {
+        int databaseSizeBeforeTest = commentRepository.findAll().size();
+        // set the field null
+        comment.setAccountId(null);
+
+        // Create the Comment, which fails.
+
+        restCommentMockMvc
+            .perform(post("/api/comments").contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(comment)))
+            .andExpect(status().isBadRequest());
+
+        List<Comment> commentList = commentRepository.findAll();
+        assertThat(commentList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     public void getAllComments() throws Exception {
         // Initialize the database
         commentRepository.saveAndFlush(comment);
@@ -131,7 +152,8 @@ public class CommentResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(comment.getId().intValue())))
-            .andExpect(jsonPath("$.[*].text").value(hasItem(DEFAULT_TEXT)));
+            .andExpect(jsonPath("$.[*].text").value(hasItem(DEFAULT_TEXT)))
+            .andExpect(jsonPath("$.[*].accountId").value(hasItem(DEFAULT_ACCOUNT_ID)));
     }
 
     @Test
@@ -146,7 +168,8 @@ public class CommentResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(comment.getId().intValue()))
-            .andExpect(jsonPath("$.text").value(DEFAULT_TEXT));
+            .andExpect(jsonPath("$.text").value(DEFAULT_TEXT))
+            .andExpect(jsonPath("$.accountId").value(DEFAULT_ACCOUNT_ID));
     }
 
     @Test
@@ -168,7 +191,7 @@ public class CommentResourceIT {
         Comment updatedComment = commentRepository.findById(comment.getId()).get();
         // Disconnect from session so that the updates on updatedComment are not directly saved in db
         em.detach(updatedComment);
-        updatedComment.text(UPDATED_TEXT);
+        updatedComment.text(UPDATED_TEXT).accountId(UPDATED_ACCOUNT_ID);
 
         restCommentMockMvc
             .perform(
@@ -181,6 +204,7 @@ public class CommentResourceIT {
         assertThat(commentList).hasSize(databaseSizeBeforeUpdate);
         Comment testComment = commentList.get(commentList.size() - 1);
         assertThat(testComment.getText()).isEqualTo(UPDATED_TEXT);
+        assertThat(testComment.getAccountId()).isEqualTo(UPDATED_ACCOUNT_ID);
     }
 
     @Test

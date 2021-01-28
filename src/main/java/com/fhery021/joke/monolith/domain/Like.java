@@ -24,6 +24,10 @@ public class Like implements Serializable {
     @Column(name = "liked", nullable = false)
     private Boolean liked;
 
+    @NotNull
+    @Column(name = "account_id", nullable = false)
+    private String accountId;
+
     @ManyToOne
     @JsonIgnoreProperties(value = "likes", allowSetters = true)
     private Joke joke;
@@ -48,6 +52,19 @@ public class Like implements Serializable {
 
     public void setLiked(Boolean liked) {
         this.liked = liked;
+    }
+
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public Like accountId(String accountId) {
+        this.accountId = accountId;
+        return this;
+    }
+
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
     }
 
     public Joke getJoke() {
@@ -87,6 +104,7 @@ public class Like implements Serializable {
         return "Like{" +
             "id=" + getId() +
             ", liked='" + isLiked() + "'" +
+            ", accountId='" + getAccountId() + "'" +
             "}";
     }
 }
