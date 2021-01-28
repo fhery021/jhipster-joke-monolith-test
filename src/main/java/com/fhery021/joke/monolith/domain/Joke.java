@@ -4,9 +4,12 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.*;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.CascadeType;
 
 /**
  * A Joke.
@@ -35,6 +38,7 @@ public class Joke implements Serializable {
 
     @OneToMany(mappedBy = "joke")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @Cascade({ CascadeType.DELETE })
     private Set<Like> likes = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
