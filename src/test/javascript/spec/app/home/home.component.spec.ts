@@ -27,29 +27,5 @@ describe('Component Tests', () => {
       accountService = TestBed.get(AccountService);
       loginModalService = TestBed.get(LoginModalService);
     });
-
-    it('Should call accountService.getAuthenticationState on init', () => {
-      // WHEN
-      comp.ngOnInit();
-
-      // THEN
-      expect(accountService.getAuthenticationState).toHaveBeenCalled();
-    });
-
-    it('Should call accountService.isAuthenticated when it checks authentication', () => {
-      // WHEN
-      comp.isAuthenticated();
-
-      // THEN
-      expect(accountService.isAuthenticated).toHaveBeenCalled();
-    });
-
-    it('Should call loginModalService.open on login', () => {
-      // WHEN
-      comp.login();
-
-      // THEN
-      expect(loginModalService.open).toHaveBeenCalled();
-    });
   });
 });
