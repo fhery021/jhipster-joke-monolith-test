@@ -1,7 +1,7 @@
 <div class="row justify-content-center">
     <div class="col-8">
         <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-            <h2 id="jhi-like-heading" jhiTranslate="jokeMonolithTestApp.like.home.createOrEditLabel">Create or edit a Like</h2>
+            <h2 id="jhi-comment-heading" jhiTranslate="jokeMonolithTestApp.comment.home.createOrEditLabel">Create or edit a Comment</h2>
 
             <div>
                 <jhi-alert-error></jhi-alert-error>
@@ -12,19 +12,19 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-control-label" jhiTranslate="jokeMonolithTestApp.like.liked" for="field_liked">Liked</label>
-                    <input type="checkbox" class="form-control" name="liked" id="field_liked"
-                           formControlName="liked"/>
-                    <div *ngIf="editForm.get('liked')!.invalid && (editForm.get('liked')!.dirty || editForm.get('liked')!.touched)">
+                    <label class="form-control-label" jhiTranslate="jokeMonolithTestApp.comment.text" for="field_text">Text</label>
+                    <input type="text" class="form-control" name="text" id="field_text"
+                           formControlName="text"/>
+                    <div *ngIf="editForm.get('text')!.invalid && (editForm.get('text')!.dirty || editForm.get('text')!.touched)">
                         <small class="form-text text-danger"
-                               *ngIf="editForm.get('liked')?.errors?.required" jhiTranslate="entity.validation.required">
+                               *ngIf="editForm.get('text')?.errors?.required" jhiTranslate="entity.validation.required">
                         This field is required.
                         </small>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-control-label" jhiTranslate="jokeMonolithTestApp.like.joke" for="field_joke">Joke</label>
+                    <label class="form-control-label" jhiTranslate="jokeMonolithTestApp.comment.joke" for="field_joke">Joke</label>
                     <select class="form-control" id="field_joke" name="joke" formControlName="joke">
                         <option [ngValue]="null"></option>
                         <option [ngValue]="jokeOption.id === editForm.get('joke')!.value?.id ? editForm.get('joke')!.value : jokeOption" *ngFor="let jokeOption of jokes; trackBy: trackById">{{ jokeOption.id }}</option>

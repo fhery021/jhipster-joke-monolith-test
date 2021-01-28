@@ -1,14 +1,12 @@
 package com.fhery021.joke.monolith.domain;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A Joke.
@@ -17,7 +15,6 @@ import java.util.Set;
 @Table(name = "joke")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Joke implements Serializable {
-
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -34,7 +31,11 @@ public class Joke implements Serializable {
 
     @OneToMany(mappedBy = "joke")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    private Set<Reaction> reactions = new HashSet<>();
+    private Set<Comment> comments = new HashSet<>();
+
+    @OneToMany(mappedBy = "joke")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    private Set<Like> likes = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
@@ -71,30 +72,56 @@ public class Joke implements Serializable {
         this.answer = answer;
     }
 
-    public Set<Reaction> getReactions() {
-        return reactions;
+    public Set<Comment> getComments() {
+        return comments;
     }
 
-    public Joke reactions(Set<Reaction> reactions) {
-        this.reactions = reactions;
+    public Joke comments(Set<Comment> comments) {
+        this.comments = comments;
         return this;
     }
 
-    public Joke addReaction(Reaction reaction) {
-        this.reactions.add(reaction);
-        reaction.setJoke(this);
+    public Joke addComment(Comment comment) {
+        this.comments.add(comment);
+        comment.setJoke(this);
         return this;
     }
 
-    public Joke removeReaction(Reaction reaction) {
-        this.reactions.remove(reaction);
-        reaction.setJoke(null);
+    public Joke removeComment(Comment comment) {
+        this.comments.remove(comment);
+        comment.setJoke(null);
         return this;
     }
 
-    public void setReactions(Set<Reaction> reactions) {
-        this.reactions = reactions;
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
     }
+
+    public Set<Like> getLikes() {
+        return likes;
+    }
+
+    public Joke likes(Set<Like> likes) {
+        this.likes = likes;
+        return this;
+    }
+
+    public Joke addLike(Like like) {
+        this.likes.add(like);
+        like.setJoke(this);
+        return this;
+    }
+
+    public Joke removeLike(Like like) {
+        this.likes.remove(like);
+        like.setJoke(null);
+        return this;
+    }
+
+    public void setLikes(Set<Like> likes) {
+        this.likes = likes;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override

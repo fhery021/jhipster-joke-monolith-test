@@ -1,9 +1,15 @@
 package com.fhery021.joke.monolith.web.rest;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import com.fhery021.joke.monolith.JokeMonolithTestApp;
 import com.fhery021.joke.monolith.domain.Like;
 import com.fhery021.joke.monolith.repository.LikeRepository;
-
+import java.util.List;
+import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import javax.persistence.EntityManager;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Integration tests for the {@link LikeResource} REST controller.
@@ -28,9 +27,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @WithMockUser
 public class LikeResourceIT {
-
-    private static final Long DEFAULT_USER_ID = 1L;
-    private static final Long UPDATED_USER_ID = 2L;
+    private static final Boolean DEFAULT_LIKED = false;
+    private static final Boolean UPDATED_LIKED = true;
 
     @Autowired
     private LikeRepository likeRepository;
@@ -50,10 +48,10 @@ public class LikeResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Like createEntity(EntityManager em) {
-        Like like = new Like()
-            .userId(DEFAULT_USER_ID);
+        Like like = new Like().liked(DEFAULT_LIKED);
         return like;
     }
+
     /**
      * Create an updated entity for this test.
      *
@@ -61,8 +59,7 @@ public class LikeResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Like createUpdatedEntity(EntityManager em) {
-        Like like = new Like()
-            .userId(UPDATED_USER_ID);
+        Like like = new Like().liked(UPDATED_LIKED);
         return like;
     }
 
@@ -76,16 +73,15 @@ public class LikeResourceIT {
     public void createLike() throws Exception {
         int databaseSizeBeforeCreate = likeRepository.findAll().size();
         // Create the Like
-        restLikeMockMvc.perform(post("/api/likes")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(like)))
+        restLikeMockMvc
+            .perform(post("/api/likes").contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(like)))
             .andExpect(status().isCreated());
 
         // Validate the Like in the database
         List<Like> likeList = likeRepository.findAll();
         assertThat(likeList).hasSize(databaseSizeBeforeCreate + 1);
         Like testLike = likeList.get(likeList.size() - 1);
-        assertThat(testLike.getUserId()).isEqualTo(DEFAULT_USER_ID);
+        assertThat(testLike.isLiked()).isEqualTo(DEFAULT_LIKED);
     }
 
     @Test
@@ -97,9 +93,8 @@ public class LikeResourceIT {
         like.setId(1L);
 
         // An entity with an existing ID cannot be created, so this API call must fail
-        restLikeMockMvc.perform(post("/api/likes")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(like)))
+        restLikeMockMvc
+            .perform(post("/api/likes").contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(like)))
             .andExpect(status().isBadRequest());
 
         // Validate the Like in the database
@@ -107,20 +102,17 @@ public class LikeResourceIT {
         assertThat(likeList).hasSize(databaseSizeBeforeCreate);
     }
 
-
     @Test
     @Transactional
-    public void checkUserIdIsRequired() throws Exception {
+    public void checkLikedIsRequired() throws Exception {
         int databaseSizeBeforeTest = likeRepository.findAll().size();
         // set the field null
-        like.setUserId(null);
+        like.setLiked(null);
 
         // Create the Like, which fails.
 
-
-        restLikeMockMvc.perform(post("/api/likes")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(like)))
+        restLikeMockMvc
+            .perform(post("/api/likes").contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(like)))
             .andExpect(status().isBadRequest());
 
         List<Like> likeList = likeRepository.findAll();
@@ -134,13 +126,14 @@ public class LikeResourceIT {
         likeRepository.saveAndFlush(like);
 
         // Get all the likeList
-        restLikeMockMvc.perform(get("/api/likes?sort=id,desc"))
+        restLikeMockMvc
+            .perform(get("/api/likes?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(like.getId().intValue())))
-            .andExpect(jsonPath("$.[*].userId").value(hasItem(DEFAULT_USER_ID.intValue())));
+            .andExpect(jsonPath("$.[*].liked").value(hasItem(DEFAULT_LIKED.booleanValue())));
     }
-    
+
     @Test
     @Transactional
     public void getLike() throws Exception {
@@ -148,18 +141,19 @@ public class LikeResourceIT {
         likeRepository.saveAndFlush(like);
 
         // Get the like
-        restLikeMockMvc.perform(get("/api/likes/{id}", like.getId()))
+        restLikeMockMvc
+            .perform(get("/api/likes/{id}", like.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(like.getId().intValue()))
-            .andExpect(jsonPath("$.userId").value(DEFAULT_USER_ID.intValue()));
+            .andExpect(jsonPath("$.liked").value(DEFAULT_LIKED.booleanValue()));
     }
+
     @Test
     @Transactional
     public void getNonExistingLike() throws Exception {
         // Get the like
-        restLikeMockMvc.perform(get("/api/likes/{id}", Long.MAX_VALUE))
-            .andExpect(status().isNotFound());
+        restLikeMockMvc.perform(get("/api/likes/{id}", Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
 
     @Test
@@ -174,19 +168,17 @@ public class LikeResourceIT {
         Like updatedLike = likeRepository.findById(like.getId()).get();
         // Disconnect from session so that the updates on updatedLike are not directly saved in db
         em.detach(updatedLike);
-        updatedLike
-            .userId(UPDATED_USER_ID);
+        updatedLike.liked(UPDATED_LIKED);
 
-        restLikeMockMvc.perform(put("/api/likes")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(updatedLike)))
+        restLikeMockMvc
+            .perform(put("/api/likes").contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(updatedLike)))
             .andExpect(status().isOk());
 
         // Validate the Like in the database
         List<Like> likeList = likeRepository.findAll();
         assertThat(likeList).hasSize(databaseSizeBeforeUpdate);
         Like testLike = likeList.get(likeList.size() - 1);
-        assertThat(testLike.getUserId()).isEqualTo(UPDATED_USER_ID);
+        assertThat(testLike.isLiked()).isEqualTo(UPDATED_LIKED);
     }
 
     @Test
@@ -195,9 +187,8 @@ public class LikeResourceIT {
         int databaseSizeBeforeUpdate = likeRepository.findAll().size();
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
-        restLikeMockMvc.perform(put("/api/likes")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(like)))
+        restLikeMockMvc
+            .perform(put("/api/likes").contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(like)))
             .andExpect(status().isBadRequest());
 
         // Validate the Like in the database
@@ -214,8 +205,8 @@ public class LikeResourceIT {
         int databaseSizeBeforeDelete = likeRepository.findAll().size();
 
         // Delete the like
-        restLikeMockMvc.perform(delete("/api/likes/{id}", like.getId())
-            .accept(MediaType.APPLICATION_JSON))
+        restLikeMockMvc
+            .perform(delete("/api/likes/{id}", like.getId()).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

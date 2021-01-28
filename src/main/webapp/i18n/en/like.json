@@ -16,7 +16,7 @@
       "detail": {
         "title": "Like"
       },
-      "userId": "User Id",
+      "liked": "Liked",
       "joke": "Joke"
     }
   }

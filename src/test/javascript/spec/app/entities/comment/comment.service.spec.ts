@@ -1,15 +1,15 @@
 import { TestBed, getTestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { LikeService } from 'app/entities/like/like.service';
-import { ILike, Like } from 'app/shared/model/like.model';
+import { CommentService } from 'app/entities/comment/comment.service';
+import { IComment, Comment } from 'app/shared/model/comment.model';
 
 describe('Service Tests', () => {
-  describe('Like Service', () => {
+  describe('Comment Service', () => {
     let injector: TestBed;
-    let service: LikeService;
+    let service: CommentService;
     let httpMock: HttpTestingController;
-    let elemDefault: ILike;
-    let expectedResult: ILike | ILike[] | boolean | null;
+    let elemDefault: IComment;
+    let expectedResult: IComment | IComment[] | boolean | null;
 
     beforeEach(() => {
       TestBed.configureTestingModule({
@@ -17,10 +17,10 @@ describe('Service Tests', () => {
       });
       expectedResult = null;
       injector = getTestBed();
-      service = injector.get(LikeService);
+      service = injector.get(CommentService);
       httpMock = injector.get(HttpTestingController);
 
-      elemDefault = new Like(0, false);
+      elemDefault = new Comment(0, 'AAAAAAA');
     });
 
     describe('Service methods', () => {
@@ -34,7 +34,7 @@ describe('Service Tests', () => {
         expect(expectedResult).toMatchObject(elemDefault);
       });
 
-      it('should create a Like', () => {
+      it('should create a Comment', () => {
         const returnedFromService = Object.assign(
           {
             id: 0,
@@ -44,17 +44,17 @@ describe('Service Tests', () => {
 
         const expected = Object.assign({}, returnedFromService);
 
-        service.create(new Like()).subscribe(resp => (expectedResult = resp.body));
+        service.create(new Comment()).subscribe(resp => (expectedResult = resp.body));
 
         const req = httpMock.expectOne({ method: 'POST' });
         req.flush(returnedFromService);
         expect(expectedResult).toMatchObject(expected);
       });
 
-      it('should update a Like', () => {
+      it('should update a Comment', () => {
         const returnedFromService = Object.assign(
           {
-            liked: true,
+            text: 'BBBBBB',
           },
           elemDefault
         );
@@ -68,10 +68,10 @@ describe('Service Tests', () => {
         expect(expectedResult).toMatchObject(expected);
       });
 
-      it('should return a list of Like', () => {
+      it('should return a list of Comment', () => {
         const returnedFromService = Object.assign(
           {
-            liked: true,
+            text: 'BBBBBB',
           },
           elemDefault
         );
@@ -86,7 +86,7 @@ describe('Service Tests', () => {
         expect(expectedResult).toContainEqual(expected);
       });
 
-      it('should delete a Like', () => {
+      it('should delete a Comment', () => {
         service.delete(123).subscribe(resp => (expectedResult = resp.ok));
 
         const req = httpMock.expectOne({ method: 'DELETE' });

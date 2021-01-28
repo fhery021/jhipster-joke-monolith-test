@@ -5,45 +5,45 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 
-import { ILike, Like } from 'app/shared/model/like.model';
-import { LikeService } from './like.service';
+import { IComment, Comment } from 'app/shared/model/comment.model';
+import { CommentService } from './comment.service';
 import { IJoke } from 'app/shared/model/joke.model';
 import { JokeService } from 'app/entities/joke/joke.service';
 
 @Component({
-  selector: 'jhi-like-update',
-  templateUrl: './like-update.component.html',
+  selector: 'jhi-comment-update',
+  templateUrl: './comment-update.component.html',
 })
-export class LikeUpdateComponent implements OnInit {
+export class CommentUpdateComponent implements OnInit {
   isSaving = false;
   jokes: IJoke[] = [];
 
   editForm = this.fb.group({
     id: [],
-    liked: [null, [Validators.required]],
+    text: [null, [Validators.required]],
     joke: [],
   });
 
   constructor(
-    protected likeService: LikeService,
+    protected commentService: CommentService,
     protected jokeService: JokeService,
     protected activatedRoute: ActivatedRoute,
     private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
-    this.activatedRoute.data.subscribe(({ like }) => {
-      this.updateForm(like);
+    this.activatedRoute.data.subscribe(({ comment }) => {
+      this.updateForm(comment);
 
       this.jokeService.query().subscribe((res: HttpResponse<IJoke[]>) => (this.jokes = res.body || []));
     });
   }
 
-  updateForm(like: ILike): void {
+  updateForm(comment: IComment): void {
     this.editForm.patchValue({
-      id: like.id,
-      liked: like.liked,
-      joke: like.joke,
+      id: comment.id,
+      text: comment.text,
+      joke: comment.joke,
     });
   }
 
@@ -53,24 +53,24 @@ export class LikeUpdateComponent implements OnInit {
 
   save(): void {
     this.isSaving = true;
-    const like = this.createFromForm();
-    if (like.id !== undefined) {
-      this.subscribeToSaveResponse(this.likeService.update(like));
+    const comment = this.createFromForm();
+    if (comment.id !== undefined) {
+      this.subscribeToSaveResponse(this.commentService.update(comment));
     } else {
-      this.subscribeToSaveResponse(this.likeService.create(like));
+      this.subscribeToSaveResponse(this.commentService.create(comment));
     }
   }
 
-  private createFromForm(): ILike {
+  private createFromForm(): IComment {
     return {
-      ...new Like(),
+      ...new Comment(),
       id: this.editForm.get(['id'])!.value,
-      liked: this.editForm.get(['liked'])!.value,
+      text: this.editForm.get(['text'])!.value,
       joke: this.editForm.get(['joke'])!.value,
     };
   }
 
-  protected subscribeToSaveResponse(result: Observable<HttpResponse<ILike>>): void {
+  protected subscribeToSaveResponse(result: Observable<HttpResponse<IComment>>): void {
     result.subscribe(
       () => this.onSaveSuccess(),
       () => this.onSaveError()

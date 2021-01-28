@@ -105,7 +105,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   likes(joke: IJoke): number | undefined {
-    return joke.reactions?.filter(j => j.like === true).length;
+    return joke.likes?.filter(j => j.liked === true).length;
   }
 
   sort(): string[] {

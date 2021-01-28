@@ -8,12 +8,12 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
- * A Like.
+ * A Comment.
  */
 @Entity
-@Table(name = "jhi_like")
+@Table(name = "comment")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Like implements Serializable {
+public class Comment implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -21,11 +21,11 @@ public class Like implements Serializable {
     private Long id;
 
     @NotNull
-    @Column(name = "liked", nullable = false)
-    private Boolean liked;
+    @Column(name = "text", nullable = false)
+    private String text;
 
     @ManyToOne
-    @JsonIgnoreProperties(value = "likes", allowSetters = true)
+    @JsonIgnoreProperties(value = "comments", allowSetters = true)
     private Joke joke;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -37,24 +37,24 @@ public class Like implements Serializable {
         this.id = id;
     }
 
-    public Boolean isLiked() {
-        return liked;
+    public String getText() {
+        return text;
     }
 
-    public Like liked(Boolean liked) {
-        this.liked = liked;
+    public Comment text(String text) {
+        this.text = text;
         return this;
     }
 
-    public void setLiked(Boolean liked) {
-        this.liked = liked;
+    public void setText(String text) {
+        this.text = text;
     }
 
     public Joke getJoke() {
         return joke;
     }
 
-    public Like joke(Joke joke) {
+    public Comment joke(Joke joke) {
         this.joke = joke;
         return this;
     }
@@ -70,10 +70,10 @@ public class Like implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Like)) {
+        if (!(o instanceof Comment)) {
             return false;
         }
-        return id != null && id.equals(((Like) o).id);
+        return id != null && id.equals(((Comment) o).id);
     }
 
     @Override
@@ -84,9 +84,9 @@ public class Like implements Serializable {
     // prettier-ignore
     @Override
     public String toString() {
-        return "Like{" +
+        return "Comment{" +
             "id=" + getId() +
-            ", liked='" + isLiked() + "'" +
+            ", text='" + getText() + "'" +
             "}";
     }
 }

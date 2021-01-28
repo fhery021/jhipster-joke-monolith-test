@@ -1,0 +1,25 @@
+entity Joke {
+	question String required
+    answer String required
+}
+
+entity Comment {
+	text String required
+}
+
+entity Like {
+	liked Boolean required
+}
+
+relationship OneToMany {
+	Joke to	Comment{joke}
+    Joke to Like{joke}
+}
+
+// Set service options to all except few
+service all with serviceImpl except Like, Comment
+
+// Set pagination options
+paginate Joke with infinite-scroll
+
+// ---------------------------------

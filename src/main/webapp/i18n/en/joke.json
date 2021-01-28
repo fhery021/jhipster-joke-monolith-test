@@ -18,7 +18,8 @@
       },
       "question": "Question",
       "answer": "Answer",
-      "reaction": "Reaction"
+      "comment": "Comment",
+      "like": "Like"
     }
   }
 }

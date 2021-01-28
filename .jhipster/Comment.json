@@ -1,9 +1,9 @@
 {
-  "name": "Like",
+  "name": "Comment",
   "fields": [
     {
-      "fieldName": "liked",
-      "fieldType": "Boolean",
+      "fieldName": "text",
+      "fieldType": "String",
       "fieldValidateRules": [
         "required"
       ]
@@ -13,13 +13,13 @@
     {
       "relationshipType": "many-to-one",
       "otherEntityName": "joke",
-      "otherEntityRelationshipName": "like",
+      "otherEntityRelationshipName": "comment",
       "relationshipName": "joke",
       "otherEntityField": "id"
     }
   ],
-  "changelogDate": "20210119111203",
-  "entityTableName": "like",
+  "changelogDate": "20210128095521",
+  "entityTableName": "comment",
   "dto": "no",
   "pagination": "no",
   "service": "no",

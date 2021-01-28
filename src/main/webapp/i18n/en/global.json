@@ -10,6 +10,7 @@
         "joke": "Joke",
         "like": "Like",
         "reaction": "Reaction",
+        "comment": "Comment",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {

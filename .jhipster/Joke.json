@@ -19,9 +19,15 @@
   "relationships": [
     {
       "relationshipType": "one-to-many",
-      "otherEntityName": "reaction",
+      "otherEntityName": "comment",
       "otherEntityRelationshipName": "joke",
-      "relationshipName": "reaction"
+      "relationshipName": "comment"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "like",
+      "otherEntityRelationshipName": "joke",
+      "relationshipName": "like"
     }
   ],
   "changelogDate": "20210119111103",

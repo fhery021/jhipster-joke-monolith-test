@@ -7,9 +7,9 @@ import org.slf4j.LoggerFactory
 import scala.concurrent.duration._
 
 /**
- * Performance test for the Like entity.
+ * Performance test for the Comment entity.
  */
-class LikeGatlingTest extends Simulation {
+class CommentGatlingTest extends Simulation {
 
     val context: LoggerContext = LoggerFactory.getILoggerFactory.asInstanceOf[LoggerContext]
     // Log all HTTP requests
@@ -43,7 +43,7 @@ class LikeGatlingTest extends Simulation {
         "Authorization" -> "${access_token}"
     )
 
-    val scn = scenario("Test the Like entity")
+    val scn = scenario("Test the Comment entity")
         .exec(http("First unauthenticated request")
         .get("/api/account")
         .headers(headers_http)
@@ -62,29 +62,29 @@ class LikeGatlingTest extends Simulation {
         .check(status.is(200)))
         .pause(10)
         .repeat(2) {
-            exec(http("Get all likes")
-            .get("/api/likes")
+            exec(http("Get all comments")
+            .get("/api/comments")
             .headers(headers_http_authenticated)
             .check(status.is(200)))
             .pause(10 seconds, 20 seconds)
-            .exec(http("Create new like")
-            .post("/api/likes")
+            .exec(http("Create new comment")
+            .post("/api/comments")
             .headers(headers_http_authenticated)
             .body(StringBody("""{
                 "id":null
-                , "liked":null
+                , "text":"SAMPLE_TEXT"
                 }""")).asJson
             .check(status.is(201))
-            .check(headerRegex("Location", "(.*)").saveAs("new_like_url"))).exitHereIfFailed
+            .check(headerRegex("Location", "(.*)").saveAs("new_comment_url"))).exitHereIfFailed
             .pause(10)
             .repeat(5) {
-                exec(http("Get created like")
-                .get("${new_like_url}")
+                exec(http("Get created comment")
+                .get("${new_comment_url}")
                 .headers(headers_http_authenticated))
                 .pause(10)
             }
-            .exec(http("Delete created like")
-            .delete("${new_like_url}")
+            .exec(http("Delete created comment")
+            .delete("${new_comment_url}")
             .headers(headers_http_authenticated))
             .pause(10)
         }
