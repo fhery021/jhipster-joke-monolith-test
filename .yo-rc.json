@@ -36,7 +36,11 @@
     "dtoSuffix": "DTO",
     "otherModules": [],
     "blueprints": [],
-    "prettierJava": true
+    "prettierJava": true,
+    "appsFolders": ["jhipster-joke-monolith-test"],
+    "directoryPath": "../",
+    "monitoring": "no",
+    "consoleOptions": []
   },
   "git-provider": "GitHub",
   "git-company": "fhery021",
