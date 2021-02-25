@@ -1,14 +1,14 @@
 <div [ngSwitch]="isAuthenticated()">
-    <div class="alert alert-success" *ngSwitchCase="true">
-        <span id="home-logged-message" *ngIf="account" jhiTranslate="home.logged.message"
-            [translateValues]="{ username: account.login }">You are logged in as user "{{ account.login }}".</span>
-    </div>
+  <div class="alert alert-success" *ngSwitchCase="true">
+    <span id="home-logged-message" *ngIf="account" jhiTranslate="home.logged.message" [translateValues]="{ username: account.login }"
+      >You are logged in as user "{{ account.login }}".</span
+    >
+  </div>
 
-    <div class="alert alert-warning" *ngSwitchCase="false">
-        <span jhiTranslate="global.messages.info.register.noaccount">You don't have an account yet?</span>&nbsp;
-        <a class="alert-link" routerLink="account/register" jhiTranslate="global.messages.info.register.link">Register a
-            new account</a>
-    </div>
+  <div class="alert alert-warning" *ngSwitchCase="false">
+    <span jhiTranslate="global.messages.info.register.noaccount">You don't have an account yet?</span>&nbsp;
+    <a class="alert-link" routerLink="account/register" jhiTranslate="global.messages.info.register.link">Register a new account</a>
+  </div>
 </div>
 
 <jhi-alert-error></jhi-alert-error>
@@ -16,55 +16,64 @@
 <jhi-alert></jhi-alert>
 
 <div [ngSwitch]="isAuthenticated()">
-    <div class="jumbotron" *ngSwitchCase="false">
-        <h1 class="display-4">Welcome!</h1>
-        <p class="lead">Log in to read some jokes.</p>
+  <div class="jumbotron" *ngSwitchCase="false">
+    <h1 class="display-4">Welcome!</h1>
+    <p class="lead">Log in to read some jokes.</p>
+  </div>
+
+  <div *ngSwitchCase="true">
+    <h2 id="page-heading">
+      <span jhiTranslate="jokeMonolithTestApp.joke.home.title">Jokes</span>
+
+      <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-joke" [routerLink]="['/joke/new']">
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="jokeMonolithTestApp.joke.home.createLabel"> Create a new Joke </span>
+      </button>
+    </h2>
+
+    <div class="alert alert-warning" id="no-result" *ngIf="jokes?.length === 0">
+      <span jhiTranslate="jokeMonolithTestApp.joke.home.notFound">No jokes found</span>
     </div>
 
-    <div *ngSwitchCase="true">
-        <h2 id="page-heading">
-            <span jhiTranslate="jokeMonolithTestApp.joke.home.title">Jokes</span>
-
-            <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-joke"
-                [routerLink]="['/joke/new']">
-                <fa-icon icon="plus"></fa-icon>
-                <span jhiTranslate="jokeMonolithTestApp.joke.home.createLabel">
-                    Create a new Joke
-                </span>
+    <div
+      class="container"
+      infinite-scroll
+      (scrolled)="loadPage(page + 1)"
+      [infiniteScrollDisabled]="page >= links['last']"
+      [infiniteScrollDistance]="0"
+    >
+      <div *ngFor="let joke of jokes" class="card w-75 mb-3">
+        <div class="card pt-3">
+          <div class="card-body">
+            <h3 class="card-title">{{ joke.question }}</h3>
+            <h4 class="card-text text-right">{{ joke.answer }}</h4>
+          </div>
+          <div class="card-footer">
+            <h6 class="card-text">{{ getLikesMessage(joke) }}</h6>
+            <button type="button" (click)="onLike(joke)" class="btn btn-primary btn-sm">
+              <fa-icon icon="thumbs-up"></fa-icon>
+              <span class="d-none d-md-inline">{{ alreadyLiked(joke) ? 'Liked' : 'Like' }}</span>
             </button>
-        </h2>
+            <button *jhiHasAnyAuthority="'ROLE_ADMIN'" type="submit" (click)="delete(joke)" class="btn btn-danger btn-sm">
+              <fa-icon icon="times"></fa-icon>
+              <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+            </button>
+          </div>
+          <div *ngFor="let comment of getComments(joke)" class="card-body">
+            {{ comment.text }}
+          </div>
 
-        <div class="alert alert-warning" id="no-result" *ngIf="jokes?.length === 0">
-            <span jhiTranslate="jokeMonolithTestApp.joke.home.notFound">No jokes found</span>
-        </div>
-
-        <div class="container" infinite-scroll (scrolled)="loadPage(page + 1)"
-            [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">
-            <div *ngFor="let joke of jokes" class="card w-75 mb-3">
-                <div class="card pt-3">
-                    <div class="card-body">
-                        <h3 class="card-title">{{ joke.question }}</h3>
-                        <h4 class="card-text text-right">{{ joke.answer }}</h4>
-                    </div>
-                    <div class="card-footer">
-                        <button type="button" [routerLink]="['/joke', joke.id, 'edit']" class="btn btn-info btn-sm">
-                            <fa-icon icon="comments"></fa-icon>
-                            <span class="d-none d-md-inline">Comment</span>
-                        </button>
-                        <button type="button" (click)="onLike(joke)" class="btn btn-primary btn-sm">
-                            <fa-icon icon="thumbs-up"></fa-icon>
-                            <span class="d-none d-md-inline">Like</span>
-                        </button>
-                        <button *jhiHasAnyAuthority="'ROLE_ADMIN'" type="submit" (click)="delete(joke)"
-                            class="btn btn-danger btn-sm">
-                            <fa-icon icon="times"></fa-icon>
-                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-                        </button>
-                        <h6 class="card-text"> {{ getLikesMessage(joke) }}
-                        </h6>
-                    </div>
-                </div>
+          <div class="card-footer">
+            <div class="form-group">
+              <input #comment placeholder="New Comment" class="form-control" />
+              <button type="button" (click)="onComment(joke, comment.value)" class="btn btn-info btn-sm">
+                <fa-icon icon="comments"></fa-icon>
+                <span class="d-none d-md-inline">Add</span>
+              </button>
             </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>

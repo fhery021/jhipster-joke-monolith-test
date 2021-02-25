@@ -15,6 +15,8 @@ import { JokeService } from '../entities/joke/joke.service';
 import { JokeDeleteDialogComponent } from '../entities/joke/joke-delete-dialog.component';
 import { LikeService } from 'app/entities/like/like.service';
 import { ILike, Like } from 'app/shared/model/like.model';
+import { IComment } from 'app/shared/model/comment.model';
+import { CommentService } from 'app/entities/comment/comment.service';
 
 @Component({
   selector: 'jhi-home',
@@ -25,8 +27,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   isSaving = false;
   jokes: IJoke[];
   likes?: ILike[];
+  comments?: IComment[];
   jokesSubscriber?: Subscription;
   likesSubscriber?: Subscription;
+  commentsSubscriber?: Subscription;
   itemsPerPage: number;
   links: any;
   page: number;
@@ -41,10 +45,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     protected modalService: NgbModal,
     protected parseLinks: JhiParseLinks,
     private accountService: AccountService,
-    private likeService: LikeService
+    private likeService: LikeService,
+    private commentService: CommentService
   ) {
     this.jokes = [];
     this.likes = [];
+    this.comments = [];
     this.itemsPerPage = ITEMS_PER_PAGE;
     this.page = 0;
     this.links = {
@@ -57,6 +63,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.registerChangeInJokes();
     this.registerChangeInLikes();
+    this.registerChangeInComments();
     this.authSubscription = this.accountService.getAuthenticationState().subscribe(account => {
       this.account = account;
       if (account !== null) {
@@ -78,6 +85,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       })
       .subscribe((res: HttpResponse<IJoke[]>) => this.paginateJokes(res.body, res.headers));
     this.loadLikes();
+    this.loadComments();
   }
 
   private reset(): void {
@@ -89,6 +97,10 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   private loadLikes(): void {
     this.likeService.query().subscribe((res: HttpResponse<ILike[]>) => (this.likes = res.body || []));
+  }
+
+  private loadComments(): void {
+    this.commentService.query().subscribe((res: HttpResponse<IComment[]>) => (this.comments = res.body || []));
   }
 
   loadPage(page: number): void {
@@ -109,9 +121,20 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.likesSubscriber = this.eventManager.subscribe('likeListModification', () => this.loadLikes());
   }
 
+  registerChangeInComments(): void {
+    this.commentsSubscriber = this.eventManager.subscribe('commentListModification', () => this.loadComments());
+  }
+
   delete(joke: IJoke): void {
     const modalRef = this.modalService.open(JokeDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.joke = joke;
+  }
+
+  onComment(joke: IJoke, comment: string): void {
+    if (this.account !== null) {
+      const newComment = this.newComment(joke, this.account.login, comment);
+      this.subscribeToSaveCommentResponse(this.commentService.create(newComment));
+    }
   }
 
   onLike(joke: IJoke): void {
@@ -140,7 +163,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
-  private alreadyLiked(joke: IJoke): boolean | undefined {
+  public alreadyLiked(joke: IJoke): boolean | undefined {
     return this.likes?.some(l => l.joke?.id === joke.id && l.accountId === this.account?.login);
   }
 
@@ -153,7 +176,27 @@ export class HomeComponent implements OnInit, OnDestroy {
     };
   }
 
+  private newComment(joke: IJoke, accountId: string, text: string): IComment {
+    return {
+      ...new Comment(),
+      text,
+      joke,
+      accountId,
+    };
+  }
+
+  getComments(joke: IJoke): IComment[] | undefined {
+    return this.comments?.filter(c => c.joke?.id === joke?.id);
+  }
+
   private subscribeToSaveLikeResponse(result: Observable<HttpResponse<ILike>>): void {
+    result.subscribe(
+      () => this.onSaveSuccess(),
+      () => this.onSaveError()
+    );
+  }
+
+  private subscribeToSaveCommentResponse(result: Observable<HttpResponse<ILike>>): void {
     result.subscribe(
       () => this.onSaveSuccess(),
       () => this.onSaveError()
@@ -162,6 +205,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   private onSaveSuccess(): void {
     this.eventManager.broadcast('likeListModification');
+    this.eventManager.broadcast('commentListModification');
     this.isSaving = false;
   }
 
