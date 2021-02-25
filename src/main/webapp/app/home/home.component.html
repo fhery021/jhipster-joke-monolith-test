@@ -59,9 +59,12 @@
               <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
             </button>
           </div>
-          <div *ngFor="let comment of getComments(joke)" class="card-body">
-            {{ comment.text }}
-          </div>
+          <ul class="list-group">
+            <li *ngFor="let comment of getComments(joke)" class="list-group-item" >
+                <span class="badge"> {{ comment.accountId }} </span>
+                {{ comment.text }}
+            </li>
+          </ul>
 
           <div class="card-footer">
             <div class="form-group">
